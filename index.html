@@ -79,6 +79,8 @@
       summitBtn.addEventListener("click", (e) => {
         e.preventDefault();
 
+        document.getElementById('qrcode').innerHTML = "";
+
         var summitBtn = document.getElementById("summitBtn");
         var tel = document.getElementById("tel").value;
         var msg = document.getElementById("msg").value;
