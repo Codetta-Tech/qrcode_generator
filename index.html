@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerador de QR Code para WhatsApp</title>
+
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-light bg-light">
+      <a class="navbar-brand" href="#">Gerador de QR Code para WhatsApp</a>
+    </nav>
+
+    <main role="main">
+      <div class="container">
+        <form id="menssageForm">
+          <div class="form-group">
+            <label for="tel">Número</label>
+            <input
+              type="tel"
+              id="tel"
+              class="form-control my-2"
+              placeholder="Telefone"
+              onkeypress="return(fMasc(this,mTel))"
+              maxlength="14"
+            />
+            <small id="telHelp" class="form-text text-muted"
+              >Verifique se colocou o '9' depois do DDD.</small
+            >
+          </div>
+          <div class="form-group">
+            <label for="msg">Menssagem</label>
+            <input
+              type="text"
+              class="form-control"
+              id="msg"
+              placeholder="Olá, como vai?"
+            />
+          </div>
+          <button id="summitBtn" type="submit" class="btn btn-primary">
+            Gerar QR code!
+          </button>
+          <a id="qrCodeLink" style="display: none;">link</a>
+        </form>
+      </div>
+      <div class="container">
+        <div
+          id="qrcode"
+          style="width: 100px; height: 100px; margin-top: 15px"
+        ></div>
+      </div>
+    </main>
+
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/static/jquery.min.js"></script>
+    <script src="/static/qrcode.min.js"></script>
+    <script>
+      summitBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        var summitBtn = document.getElementById("summitBtn");
+        var tel = document.getElementById("tel").value;
+        var msg = document.getElementById("msg").value;
+
+        const url = encodeURI(
+          "https://api.whatsapp.com/send?phone=" +
+            tel.replace(/\D/g, "") +
+            "&text=" +
+            msg
+        );
+
+        var link = document.getElementById("qrCodeLink");
+        link.style.display = 'inline';
+        link.href = url;
+        
+        var image = document.getElementById("qrcode");
+        var qrcode = new QRCode(image, url);
+
+      });
+      function fMasc(objeto, mascara) {
+        obj = objeto;
+        masc = mascara;
+        setTimeout("fMascEx()", 1);
+      }
+
+      function fMascEx() {
+        obj.value = masc(obj.value);
+      }
+      function mTel(tel) {
+        tel = tel.replace(/\D/g, "");
+        tel = tel.replace(/^(\d)/, "($1");
+        tel = tel.replace(/(.{3})(\d)/, "$1)$2");
+        if (tel.length == 9) {
+          tel = tel.replace(/(.{1})$/, "-$1");
+        } else if (tel.length == 10) {
+          tel = tel.replace(/(.{2})$/, "-$1");
+        } else if (tel.length == 11) {
+          tel = tel.replace(/(.{3})$/, "-$1");
+        } else if (tel.length == 12) {
+          tel = tel.replace(/(.{4})$/, "-$1");
+        } else if (tel.length > 12) {
+          tel = tel.replace(/(.{4})$/, "-$1");
+        }
+        return tel;
+      }
+    </script>
+  </body>
+</html>
